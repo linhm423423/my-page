@@ -1,0 +1,107 @@
+
+<!--Stop reading the source code smh. - Lightning -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .copyOverride {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    body {
+      font-family: Poppins, sans-serif;
+      text-align: center;
+      margin: 50px 20px;
+      background-color: #f9f9f9;
+    }
+
+    canvas {
+      border: none;
+      margin-top: 20px;
+      max-width: 600px;
+      width: 90%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://visual-asset.polyhedra.network/Logo/Polyhedra/Polyhedra-Logo.svg" alt="Polyhedra Quiz" width="200">
+  <br><br>
+  <canvas id="quizCanvas" class="copyOverride"></canvas>
+
+  <script>
+    const canvas = document.getElementById('quizCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const text = '"With ZKPyTorch, we can easily generate ________ proofs to verify key valuation metrics—such as model accuracy and robustness—without exposing the model’s internal details."';
+
+    function getWrappedLines(context, text, maxWidth) {
+      const words = text.split(' ');
+      let line = '';
+      const lines = [];
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const testWidth = context.measureText(testLine).width;
+        if (testWidth > maxWidth && n > 0) {
+          lines.push(line.trim());
+          line = words[n] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+      lines.push(line.trim());
+      return lines;
+    }
+
+    function draw() {
+      const fontSize = Math.max(canvas.width / 25, 16);
+      ctx.font = `${fontSize}px Poppins, sans-serif`;
+      const lineHeight = fontSize * 1.4;
+      const maxWidth = canvas.width * 0.9;
+
+      const lines = getWrappedLines(ctx, text, maxWidth);
+
+      canvas.height = lines.length * lineHeight + 40;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.font = `${fontSize}px Poppins, sans-serif`;
+
+      let y = (canvas.height - lines.length * lineHeight) / 2;
+
+      for (const line of lines) {
+        ctx.fillText(line, canvas.width / 2, y);
+        y += lineHeight;
+      }
+
+      for (let i = 0; i < 300; i++) {
+        const nx = Math.random() * canvas.width;
+        const ny = Math.random() * canvas.height;
+        const alpha = Math.random() * 0.05;
+        ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
+        ctx.fillRect(nx, ny, 1, 1);
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    function init() {
+      canvas.width = Math.min(window.innerWidth * 0.9, 600);
+      setTimeout(draw, 1000);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+  </script>
+</body>
+</html>
